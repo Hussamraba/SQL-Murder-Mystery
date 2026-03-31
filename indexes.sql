@@ -42,3 +42,47 @@
 -- ➕ Add your own indexes below based on your EXPLAIN QUERY PLAN analysis:
 
 
+-- =============================================================
+--  indexes.sql — SQL Murder Mystery Performance Investigation
+--  SQLite:  sqlite3 sql-murder-mystery.db < indexes.sql
+-- =============================================================
+
+-- Q1: filter by city + type, and support ORDER BY date DESC
+CREATE INDEX IF NOT EXISTS idx_crime_city_type_date
+ON crime_scene_report(city, type, date DESC);
+
+-- Q2, Q6, Q8: JOIN person -> drivers_license
+CREATE INDEX IF NOT EXISTS idx_person_license_id
+ON person(license_id);
+
+-- Q3: filter gym check-ins by date, join by membership, order by check_in_time
+CREATE INDEX IF NOT EXISTS idx_checkin_date_membership
+ON get_fit_now_check_in(check_in_date, membership_id, check_in_time);
+
+-- Q4: filter gym members by status
+CREATE INDEX IF NOT EXISTS idx_member_status
+ON get_fit_now_member(membership_status);
+
+-- Q4: join gym members -> person
+CREATE INDEX IF NOT EXISTS idx_member_person_id
+ON get_fit_now_member(person_id);
+
+-- Q5: filter Facebook events by date range, then join to person
+CREATE INDEX IF NOT EXISTS idx_facebook_date_person
+ON facebook_event_checkin(date, person_id);
+
+-- Q5: alternate join support
+CREATE INDEX IF NOT EXISTS idx_facebook_person_id
+ON facebook_event_checkin(person_id);
+
+-- Q7: join interview -> person
+CREATE INDEX IF NOT EXISTS idx_interview_person_id
+ON interview(person_id);
+
+-- Q4, Q8: join person -> income via SSN
+CREATE INDEX IF NOT EXISTS idx_person_ssn
+ON person(ssn);
+
+-- Q6: filter license table by hair color + car make
+CREATE INDEX IF NOT EXISTS idx_license_hair_car
+ON drivers_license(hair_color, car_make);
